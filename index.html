@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Metas - Sesión de Mentoría</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        /* Formulario de entrada */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0066CC;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: #0066CC;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* Diagnóstico */
+        .diagnostico-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-item {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .score-bajo {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef5350;
+        }
+
+        .score-medio {
+            background: #fff8e1;
+            color: #f57c00;
+            border: 2px solid #ffa726;
+        }
+
+        .score-alto {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #66bb6a;
+        }
+
+        .escenario-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .escenario-oportunidad {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .escenario-desarrollo {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+
+        .escenario-consolidado {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Metas */
+        .metas-section {
+            margin-top: 30px;
+        }
+
+        .metas-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .meta-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .meta-card:hover {
+            border-color: #0066CC;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.1);
+        }
+
+        .meta-card.selected {
+            border-color: #0066CC;
+            background: #f0f8ff;
+        }
+
+        .meta-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #0066CC;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .meta-titulo {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            padding-right: 40px;
+        }
+
+        .meta-pasos {
+            margin-top: 10px;
+            padding-left: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .meta-pasos li {
+            margin: 5px 0;
+        }
+
+        .dimension-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        /* Instrucciones Mi Vida Tec */
+        .instrucciones {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .instrucciones h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .paso {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #0066CC;
+        }
+
+        .paso-numero {
+            background: #0066CC;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .paso-contenido {
+            flex-grow: 1;
+        }
+
+        .paso-contenido strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .metas-resumen {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .metas-resumen h5 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .meta-texto {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0066CC;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0066CC;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .checklist li.completed {
+            background: #e8f5e9;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .diagnostico-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Generador de Metas</h1>
+            <p>Sesión de Mentoría - Mentora Karen Guzmán</p>
+        </div>
+
+        <!-- Paso 1: Identificación -->
+        <div id="paso-identificacion" class="card">
+            <h2>Identifícate</h2>
+            <div class="input-group">
+                <label for="matricula">Matrícula (Ejemplo: A01234567)</label>
+                <input type="text" id="matricula" placeholder="Ingresa tu matrícula" maxlength="9">
+            </div>
+            <button class="btn" onclick="buscarEstudiante()">Buscar mi Diagnóstico</button>
+            
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Buscando tu información...</p>
+            </div>
+            
+            <div id="error-message" class="alert alert-error hidden"></div>
+        </div>
+
+        <!-- Paso 2: Diagnóstico -->
+        <div id="paso-diagnostico" class="card hidden">
+            <h2>Tu Diagnóstico</h2>
+            <p><strong>Nombre:</strong> <span id="nombre-estudiante"></span></p>
+            <p><strong>Matrícula:</strong> <span id="matricula-estudiante"></span></p>
+            
+            <div class="diagnostico-grid" id="diagnostico-grid">
+                <!-- Se llena dinámicamente -->
+            </div>
+            
+            <div>
+                <strong>Tu escenario:</strong>
+                <span id="escenario-badge"></span>
+            </div>
+            
+            <button class="btn" onclick="mostrarMetas()">Ver Metas Recomendadas</button>
+        </div>
+
+        <!-- Paso 3: Selección de Metas -->
+        <div id="paso-metas" class="card hidden">
+            <h2>Selecciona tus Metas del Periodo</h2>
+            
+            <!-- Metas Prioritarias -->
+            <div class="metas-section">
+                <h3>📌 Meta Prioritaria (Elige 1)</h3>
+                <p style="color: #666; margin-bottom: 15px;">Basada en las áreas que necesitas fortalecer según tu diagnóstico</p>
+                <div id="metas-prioritarias">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Metas Complementarias -->
+            <div class="metas-section">
+                <h3>✨ Meta Complementaria (Elige 1)</h3>
+                <p style="color: #666; margin-bottom: 15px;">Para tu desarrollo integral y bienestar personal</p>
+                <div id="metas-complementarias">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="volverDiagnostico()">← Regresar</button>
+                <button class="btn" onclick="confirmarMetas()" id="btn-confirmar-metas" disabled>Confirmar Metas</button>
+            </div>
+        </div>
+
+        <!-- Paso 4: Instrucciones Mi Vida Tec -->
+        <div id="paso-instrucciones" class="card hidden">
+            <h2>📝 Registra tus Metas en Mi Vida Tec</h2>
+            
+            <!-- Resumen de metas seleccionadas -->
+            <div class="metas-resumen">
+                <h5>Tus Metas Seleccionadas:</h5>
+                <div class="meta-texto">
+                    <strong>Meta Prioritaria:</strong>
+                    <p id="resumen-meta-prioritaria"></p>
+                </div>
+                <div class="meta-texto">
+                    <strong>Meta Complementaria:</strong>
+                    <p id="resumen-meta-complementaria"></p>
+                </div>
+            </div>
+            
+            <button class="btn btn-success" onclick="copiarMetas()">📋 Copiar Metas al Portapapeles</button>
+            
+            <!-- Instrucciones paso a paso -->
+            <div class="instrucciones">
+                <h4>Sigue estos pasos:</h4>
+                
+                <div class="paso">
+                    <div class="paso-numero">1</div>
+                    <div class="paso-contenido">
+                        <strong>Abre Mi Tec en una nueva pestaña</strong>
+                        <button class="btn btn-secondary" onclick="abrirMiTec()" style="margin-top: 10px;">
+                            Abrir Mi Tec →
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="paso">
+                    <div class="paso-numero">2</div>
+                    <div class="paso-contenido">
+                        <strong>Navega a Mi Vida Tec</strong>
+                        <span>Mi Tec → Mi Vida Tec → Plan de Vida y Carrera → Metas del Periodo</span>
+                    </div>
+                </div>
+                
+                <div class="paso">
+                    <div class="paso-numero">3</div>
+                    <div class="paso-contenido">
+                        <strong>Agrega tu Meta Prioritaria</strong>
+                        <span>Click en "+ Agregar Meta" → Categoría: "Académica/Profesional" → Pega el texto de tu meta</span>
+                    </div>
+                </div>
+                
+                <div class="paso">
+                    <div class="paso-numero">4</div>
+                    <div class="paso-contenido">
+                        <strong>Agrega tu Meta Complementaria</strong>
+                        <span>Click en "+ Agregar Meta" → Categoría: "Desarrollo Personal" → Pega el texto de tu meta</span>
+                    </div>
+                </div>
+                
+                <div class="paso">
+                    <div class="paso-numero">5</div>
+                    <div class="paso-contenido">
+                        <strong>Establece fecha límite</strong>
+                        <span>Para ambas metas: Fecha límite en 5 semanas</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Checklist de confirmación -->
+            <div style="margin-top: 20px;">
+                <h4>Confirma que completaste:</h4>
+                <ul class="checklist">
+                    <li>
+                        <input type="checkbox" id="check1" onchange="verificarChecklist()">
+                        <label for="check1">Abrí Mi Tec</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check2" onchange="verificarChecklist()">
+                        <label for="check2">Registré mi Meta Prioritaria</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check3" onchange="verificarChecklist()">
+                        <label for="check3">Registré mi Meta Complementaria</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check4" onchange="verificarChecklist()">
+                        <label for="check4">Establecí las fechas límite</label>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="cambiarMetas()">← Cambiar Metas</button>
+                <button class="btn btn-success" onclick="finalizarProceso()" id="btn-finalizar" disabled>
+                    ✓ Confirmar Registro Completo
+                </button>
+            </div>
+        </div>
+
+        <!-- Paso 5: Confirmación final -->
+        <div id="paso-confirmacion" class="card hidden">
+            <div style="text-align: center;">
+                <h2 style="color: #28a745; margin-bottom: 20px;">✅ ¡Proceso Completado!</h2>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">
+                    Tus metas han sido registradas exitosamente.
+                </p>
+                <p style="color: #666; margin-bottom: 30px;">
+                    Recuerda revisar tu progreso semanalmente en Mi Vida Tec y trabajar consistentemente en tus metas.
+                </p>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="stat-total">0</div>
+                        <div class="stat-label">Estudiantes Atendidos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="stat-completados">0</div>
+                        <div class="stat-label">Registros Completados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="stat-porcentaje">0%</div>
+                        <div class="stat-label">Tasa de Éxito</div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="nuevoEstudiante()">Atender Nuevo Estudiante</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let estudianteActual = null;
+        let metasDisponibles = null;
+        let metaPrioritariaSeleccionada = null;
+        let metaComplementariaSeleccionada = null;
+
+        // Buscar estudiante por matrícula
+        function buscarEstudiante() {
+            const matricula = document.getElementById('matricula').value.trim().toUpperCase();
+            
+            if (!matricula) {
+                mostrarError('Por favor ingresa tu matrícula');
+                return;
+            }
+            
+            // Mostrar loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('error-message').classList.add('hidden');
+            
+            // Llamar al backend
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    document.getElementById('loading').classList.add('hidden');
+                    
+                    if (response.success) {
+                        estudianteActual = response.data;
+                        mostrarDiagnostico();
+                    } else {
+                        mostrarError(response.error || 'No se encontró tu matrícula en el diagnóstico');
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    document.getElementById('loading').classList.add('hidden');
+                    mostrarError('Error al buscar información: ' + error);
+                })
+                .obtenerDiagnostico(matricula);
+        }
+
+        // Mostrar diagnóstico del estudiante
+        function mostrarDiagnostico() {
+            // Llenar información básica
+            document.getElementById('nombre-estudiante').textContent = estudianteActual.name || 'No registrado';
+            document.getElementById('matricula-estudiante').textContent = estudianteActual.matricula;
+            
+            // Crear grid de diagnóstico
+            const grid = document.getElementById('diagnostico-grid');
+            grid.innerHTML = '';
+            
+            const areas = [
+                { key: 'score_carrera', label: '🎓 Definición de Carrera', score: estudianteActual.score_carrera },
+                { key: 'score_academico', label: '📚 Desempeño Académico', score: estudianteActual.score_academico },
+                { key: 'score_practicas', label: '💼 Prácticas Profesionales', score: estudianteActual.score_practicas },
+                { key: 'score_servicio', label: '🤝 Servicio Social', score: estudianteActual.score_servicio }
+            ];
+            
+            areas.forEach(area => {
+                const div = document.createElement('div');
+                div.className = 'score-item ' + getScoreClass(area.score);
+                div.innerHTML = `
+                    <div>${area.label}</div>
+                    <div style="font-size: 1.5em; margin-top: 5px;">${area.score}/5</div>
+                `;
+                grid.appendChild(div);
+            });
+            
+            // Mostrar escenario
+            const escenarioBadge = document.getElementById('escenario-badge');
+            escenarioBadge.className = 'escenario-badge escenario-' + estudianteActual.version.toLowerCase();
+            escenarioBadge.textContent = estudianteActual.version;
+            
+            // Ocultar paso 1 y mostrar paso 2
+            document.getElementById('paso-identificacion').classList.add('hidden');
+            document.getElementById('paso-diagnostico').classList.remove('hidden');
+            
+            // Cargar metas disponibles
+            cargarMetas();
+        }
+
+        // Cargar metas del backend
+        function cargarMetas() {
+            google.script.run
+                .withSuccessHandler(function(metas) {
+                    metasDisponibles = metas;
+                })
+                .withFailureHandler(function(error) {
+                    console.error('Error cargando metas:', error);
+                })
+                .obtenerMetasDisponibles();
+        }
+
+        // Mostrar metas recomendadas
+        function mostrarMetas() {
+            if (!metasDisponibles) {
+                mostrarError('Cargando metas, por favor espera...');
+                setTimeout(mostrarMetas, 1000);
+                return;
+            }
+            
+            // Determinar metas prioritarias según áreas débiles
+            const metasPrioritariasDiv = document.getElementById('metas-prioritarias');
+            metasPrioritariasDiv.innerHTML = '';
+            
+            // Si tiene áreas débiles, mostrar metas relacionadas
+            if (estudianteActual.areasDebiles.length > 0) {
+                estudianteActual.areasDebiles.forEach(area => {
+                    if (metasDisponibles.prioritarias[area]) {
+                        metasDisponibles.prioritarias[area].forEach(meta => {
+                            metasPrioritariasDiv.appendChild(crearMetaCard(meta, 'prioritaria'));
+                        });
+                    }
+                });
+            } else {
+                // Si no tiene áreas débiles (Consolidado), mostrar mensaje
+                metasPrioritariasDiv.innerHTML = '<p style="color: #28a745;">¡Felicidades! No tienes áreas críticas. Enfócate en las metas de desarrollo integral.</p>';
+            }
+            
+            // Mostrar metas complementarias
+            const metasComplementariasDiv = document.getElementById('metas-complementarias');
+            metasComplementariasDiv.innerHTML = '';
+            
+            // Mostrar 2 metas de cada dimensión de bienestar
+            const dimensiones = ['fisica', 'emocional', 'social', 'intelectual', 'espiritual', 'financiera'];
+            dimensiones.forEach(dimension => {
+                if (metasDisponibles.complementarias[dimension]) {
+                    // Tomar máximo 2 metas de cada dimensión
+                    metasDisponibles.complementarias[dimension].slice(0, 2).forEach(meta => {
+                        metasComplementariasDiv.appendChild(crearMetaCard(meta, 'complementaria'));
+                    });
+                }
+            });
+            
+            // Mostrar paso 3
+            document.getElementById('paso-diagnostico').classList.add('hidden');
+            document.getElementById('paso-metas').classList.remove('hidden');
+        }
+
+        // Crear card de meta
+        function crearMetaCard(meta, tipo) {
+            const div = document.createElement('div');
+            div.className = 'meta-card';
+            div.dataset.metaId = meta.id;
+            div.dataset.tipo = tipo;
+            
+            div.innerHTML = `
+                <div class="meta-titulo">${meta.texto}</div>
+                <div class="dimension-tag">${getDimensionLabel(meta.dimension)}</div>
+                <ul class="meta-pasos">
+                    ${meta.pasos.map(paso => `<li>${paso}</li>`).join('')}
+                </ul>
+            `;
+            
+            div.onclick = function() {
+                seleccionarMeta(this, tipo, meta);
+            };
+            
+            return div;
+        }
+
+        // Seleccionar meta
+        function seleccionarMeta(element, tipo, meta) {
+            // Remover selección previa del mismo tipo
+            document.querySelectorAll(`.meta-card[data-tipo="${tipo}"]`).forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Marcar como seleccionada
+            element.classList.add('selected');
+            
+            // Guardar selección
+            if (tipo === 'prioritaria') {
+                metaPrioritariaSeleccionada = meta;
+            } else {
+                metaComplementariaSeleccionada = meta;
+            }
+            
+            // Habilitar botón si ambas están seleccionadas o si es consolidado
+            const puedeConfirmar = (metaPrioritariaSeleccionada || estudianteActual.version === 'Consolidado') 
+                                  && metaComplementariaSeleccionada;
+            document.getElementById('btn-confirmar-metas').disabled = !puedeConfirmar;
+        }
+
+        // Confirmar metas seleccionadas
+        function confirmarMetas() {
+            // Validar selección
+            if (!metaComplementariaSeleccionada) {
+                mostrarError('Por favor selecciona al menos una meta complementaria');
+                return;
+            }
+            
+            // Guardar en backend
+            const datos = {
+                matricula: estudianteActual.matricula,
+                nombre: estudianteActual.name,
+                escenario: estudianteActual.version,
+                metaPrioritaria: metaPrioritariaSeleccionada ? metaPrioritariaSeleccionada.texto : 'N/A - Estudiante Consolidado',
+                metaComplementaria: metaComplementariaSeleccionada.texto
+            };
+            
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        mostrarInstrucciones();
+                    } else {
+                        mostrarError('Error al guardar metas');
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    mostrarError('Error: ' + error);
+                })
+                .guardarSeleccionMetas(datos);
+        }
+
+        // Mostrar instrucciones de Mi Vida Tec
+        function mostrarInstrucciones() {
+            // Llenar resumen
+            document.getElementById('resumen-meta-prioritaria').textContent = 
+                metaPrioritariaSeleccionada ? metaPrioritariaSeleccionada.texto : 'N/A - Enfoque en desarrollo integral';
+            document.getElementById('resumen-meta-complementaria').textContent = 
+                metaComplementariaSeleccionada.texto;
+            
+            // Mostrar paso 4
+            document.getElementById('paso-metas').classList.add('hidden');
+            document.getElementById('paso-instrucciones').classList.remove('hidden');
+        }
+
+        // Copiar metas al portapapeles
+        function copiarMetas() {
+            const texto = `METAS DEL PERIODO
+
+META PRIORITARIA:
+${metaPrioritariaSeleccionada ? metaPrioritariaSeleccionada.texto : 'N/A - Estudiante Consolidado'}
+
+META COMPLEMENTARIA:
+${metaComplementariaSeleccionada.texto}
+
+Fecha límite: ${getFechaLimite()}`;
+            
+            navigator.clipboard.writeText(texto).then(function() {
+                // Mostrar confirmación temporal
+                const btn = event.target;
+                const textoOriginal = btn.textContent;
+                btn.textContent = '✓ Copiado!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(function() {
+                    btn.textContent = textoOriginal;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(function(err) {
+                // Fallback para navegadores antiguos
+                const textarea = document.createElement('textarea');
+                textarea.value = texto;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                alert('Metas copiadas al portapapeles');
+            });
+        }
+
+        // Abrir Mi Tec
+        function abrirMiTec() {
+            window.open('https://mitec.itesm.mx/', '_blank');
+            
+            // Marcar primer checkbox automáticamente después de 3 segundos
+            setTimeout(function() {
+                document.getElementById('check1').checked = true;
+                verificarChecklist();
+            }, 3000);
+        }
+
+        // Verificar checklist
+        function verificarChecklist() {
+            const checks = [
+                document.getElementById('check1').checked,
+                document.getElementById('check2').checked,
+                document.getElementById('check3').checked,
+                document.getElementById('check4').checked
+            ];
+            
+            // Actualizar apariencia de items completados
+            checks.forEach((checked, index) => {
+                const li = document.querySelectorAll('.checklist li')[index];
+                if (checked) {
+                    li.classList.add('completed');
+                } else {
+                    li.classList.remove('completed');
+                }
+            });
+            
+            // Habilitar botón si todo está marcado
+            const todoCompletado = checks.every(check => check === true);
+            document.getElementById('btn-finalizar').disabled = !todoCompletado;
+        }
+
+        // Finalizar proceso
+        function finalizarProceso() {
+            // Confirmar registro en Mi Vida Tec
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        // Obtener estadísticas
+                        google.script.run
+                            .withSuccessHandler(function(stats) {
+                                document.getElementById('stat-total').textContent = stats.total;
+                                document.getElementById('stat-completados').textContent = stats.completados;
+                                document.getElementById('stat-porcentaje').textContent = stats.porcentajeCompletado + '%';
+                                
+                                // Mostrar confirmación final
+                                document.getElementById('paso-instrucciones').classList.add('hidden');
+                                document.getElementById('paso-confirmacion').classList.remove('hidden');
+                            })
+                            .obtenerEstadisticas();
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    console.error('Error confirmando registro:', error);
+                })
+                .confirmarRegistroMiVidaTec(estudianteActual.matricula);
+        }
+
+        // Funciones auxiliares
+        function getScoreClass(score) {
+            if (score <= 2) return 'score-bajo';
+            if (score <= 3) return 'score-medio';
+            return 'score-alto';
+        }
+
+        function getDimensionLabel(dimension) {
+            const labels = {
+                'fisica': '💪 Física',
+                'emocional': '😊 Emocional',
+                'social': '👥 Social',
+                'intelectual': '📚 Intelectual',
+                'espiritual': '✨ Espiritual',
+                'financiera': '💰 Financiera',
+                'ocupacional': '💼 Ocupacional'
+            };
+            return labels[dimension] || dimension;
+        }
+
+        function getFechaLimite() {
+            const fecha = new Date();
+            fecha.setDate(fecha.getDate() + 35); // 5 semanas
+            return fecha.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = mensaje;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(function() {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function volverDiagnostico() {
+            document.getElementById('paso-metas').classList.add('hidden');
+            document.getElementById('paso-diagnostico').classList.remove('hidden');
+        }
+
+        function cambiarMetas() {
+            document.getElementById('paso-instrucciones').classList.add('hidden');
+            document.getElementById('paso-metas').classList.remove('hidden');
+        }
+
+        function nuevoEstudiante() {
+            // Reiniciar todo
+            estudianteActual = null;
+            metaPrioritariaSeleccionada = null;
+            metaComplementariaSeleccionada = null;
+            
+            // Limpiar formulario
+            document.getElementById('matricula').value = '';
+            
+            // Limpiar checkboxes
+            document.querySelectorAll('.checklist input').forEach(check => {
+                check.checked = false;
+            });
+            
+            // Ocultar todos los pasos excepto el primero
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.add('hidden');
+            });
+            document.getElementById('paso-identificacion').classList.remove('hidden');
+        }
+
+        // Enter para buscar
+        document.getElementById('matricula').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarEstudiante();
+            }
+        });
+    </script>
+</body>
+</html>
