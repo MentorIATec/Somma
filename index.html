@@ -821,7 +821,7 @@
             }
             
             // Habilitar botón si ambas están seleccionadas o si es consolidado
-            const puedeConfirmar = (metaPrioritariaSeleccionada || estudianteActual.version === 'Consolidado') 
+            const puedeConfirmar = (metaPrioritariaSeleccionada || estudianteActual.areasDebiles.length === 0) 
                                   && metaComplementariaSeleccionada;
             document.getElementById('btn-confirmar-metas').disabled = !puedeConfirmar;
         }
